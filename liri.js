@@ -9,27 +9,32 @@ var moment = require('moment');
 var command = process.argv[2];
 var input = process.argv[3];
 
-switch (command) {
-    case 'concert-this':
-        concert(input);
-        break;
-    case `spotify-this-song`:
-        spotifySong(input);
-        break;
-    case `movie-this`:
-        movie(input);
-        break;
-    case `do-what-it-says`:
-        dothis();
-        break;
-    default:
-        console.log("Sorry I don't understand.");
-}
+processCommand(command);
 
+function processCommand(command) {
+
+    switch (command) {
+        case 'concert-this':
+            concert(input);
+            break;
+        case `spotify-this-song`:
+            spotifySong(input);
+            break;
+        case `movie-this`:
+            movie(input);
+            break;
+        case `do-what-it-says`:
+            dothis();
+            break;
+        default:
+            console.log("Sorry I don't understand.");
+
+    }
+}
 function concert(artist) {
     axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp")
         .then(function (response) {
-            response.data.forEach(function(current){
+            response.data.forEach(function (current) {
                 console.log("Venue Name: " + current.venue.name);
                 console.log("Location: " + current.venue.city + ', ' + current.venue.country);
                 var datetime = moment(current.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
@@ -41,7 +46,7 @@ function concert(artist) {
 
 function spotifySong(song) {
 
-    if(!song){
+    if (!song) {
         song = 'The Sign by Ace of Base';
     }
     spotify.search({ type: 'track', query: song }, function (err, data) {
@@ -56,7 +61,7 @@ function spotifySong(song) {
 }
 
 function movie(movie) {
-    if(!movie){
+    if (!movie) {
         movie = "Mr. Nobody";
     }
     axios.get("http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy")
@@ -93,6 +98,9 @@ function dothis() {
     fs.readFile('random.txt', 'utf8', function (err, data) {
         var trimmed = data.trim();
         var args = trimmed.split(',');
-        console.log(args);
+        command = args[0];
+        input = args[1];
+        processCommand(command);
+
     })
 }
